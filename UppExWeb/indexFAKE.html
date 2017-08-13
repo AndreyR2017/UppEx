@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <link rel="stylesheet" media="screen" href="main.css"/>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+</head>
+<body>
+	<!-- <div>
+        <img id="fondo" src="coast.jpg" style="position: absolute; 
+        	bottom: 0px; 
+        	right: 0px; 
+        	min-width: 100%; 
+        	min-height: 100%; 
+        	width: 900px; 
+        	height: auto; 
+        	z-index: -1000; 
+        	overflow: hidden;"/>
+    </div> -->
+
+	<header style="background-color: black; color: white; height: 50%; font-family: Eras Bold ITC;">
+        <h1 style="font-size: 85px;">UppEx</h1><h1 style="font-family: Webdings; text-align: left; ">FIREBASETFIREBASETFIREBASETFIREBASETFIREBASETFIREBASETFIREBASET</h1>
+    </header>
+	<div style="text-align: center;">
+        <button onclick="consultarMovimientos()" class="btn btn-danger">Movimientos</button>
+        <label style="text-align: right; color: white;">Canciones por genero</label>
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<select  style="width: 100px; margin-left: 930px;" class="form-control" name="generos" id="generos" onchange="cancionesGenero()" >
+            <option >Metal</option>
+            <option >Rock</option>
+            <option >Soundtrack</option>
+			<option >Pop</option>
+			<option >Electronic</option>
+			<option >Alternative</option>
+			<option >Industrial</option>
+        </select><br /><br />
+    </div>
+    
+    <!--<div style="text-align: center;" id="insertarCancion">
+        Nombre<input type="text" id="cancion"/><br />
+        Artista<input type="text" id="artista"/><br />
+        Id genero<input type="text" id="idGenero"/> <br /><br />
+        <button onclick="agregarCancion(); ocultar();" class=" btn btn-danger">Agregar</button>-->
+    </div>
+    <table class="table table-hover" id="resultados"></table>
+    
+   	<script type="text/javascript" src="jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		  var tabla = document.getElementById('resultados');
+          var sGenero = document.getElementById("generos");
+            
+           	function consultarMovimientos() {
+				var body={
+					action:'consultarMovimientos'
+				};
+				$.ajax({
+					url: 'http://localhost:8080/webServicePaqueteria/',
+					type: 'POST',
+					data: JSON.stringify(body),
+					contentType: 'application/json',
+					dataType:'json',
+					async: false,
+					success:function(results){
+					   var resultados= JSON.stringify(results);
+                       var movimiento = JSON.parse(resultados);
+                       
+                       var tablaMovimiento = '<thead style="color:white;"><tr class="table-warning" style="color:white;"><th style="color:white;text-align: center;">ID</th><th style="text-align: center;">HORA</th><th style="text-align: center;">DESCRIPCION</th><th style="text-align: center;">TIPO</th></tr></thead>'
+                       var i=0; 
+                       for(i=0; i<movimiento.length;i++)
+                       {
+                            tablaCanciones += "<tr><td>"+movimiento[i].idmovimiento+"</td><td>"+movimiento[i].hora+"</td><td>"+movimiento[i].descripcion+"</td><td>"
+                                            +movimiento[i].tipo+"</td></tr>" 
+                       }
+                       tabla.innerHTML=tablaMovimiento
+					}
+				});
+			}
+            
+            
+           	function cancionesGenero() {
+                var sG = sGenero.options[sGenero.selectedIndex].text;
+                
+				var body={
+					action:'generoC',
+                    genero: sG
+				};
+				$.ajax({
+					url: 'http://localhost:8080/webServicePaqueteria/',
+					type: 'POST',
+					data: JSON.stringify(body),
+					contentType: 'application/json',
+					dataType:'json',
+					async: false,
+					success:function(results){
+					   var resultados= JSON.stringify(results);
+                       var cancionesGenero= JSON.parse(resultados);
+                       
+                       var tablaCancionesG = '<thead><tr class="table-warning"><th style="text-align: center;">Genero</th><th style="text-align: center;">Artista</th></th><th style="text-align: center;">Cancion</th></tr></thead>'
+                       var i=0; 
+                       for(i=0; i<cancionesGenero.length;i++)
+                       {
+                            tablaCancionesG += "<tr><td>"+cancionesGenero[i].genero+"</td><td>"+cancionesGenero[i].artista+"</td><td>"+cancionesGenero[i].nombre+"</td></tr>" 
+                       }
+                       tabla.innerHTML=tablaCancionesG
+					}
+				});
+			}
+            
+           	
+			var ins = document.getElementById('insertar')
+            function mostrar()
+            {
+                document.getElementById('insertar').style.display = 'block';
+            }
+            
+            function ocultar()
+            {
+                ins.style.display = 'none';
+            }
+	</script>
+
+</body>
+</html>
